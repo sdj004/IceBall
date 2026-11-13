@@ -16,5 +16,9 @@ class Home:
             elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
                 close_canvas()
             elif event.type == SDL_KEYDOWN and event.key == SDLK_RETURN:
+                print("enter")
                 run_game = True
+
+
+        return run_game
             
