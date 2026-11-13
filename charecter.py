@@ -6,13 +6,18 @@ class Charecter:
         self.run = load_image("run1.png")
         self.hit = load_image("hit1.png")
         self.throw = load_image("throwSnowBall1.png")
+        self.make = load_image("makeSnowBall1.png")
         self.x = 200
         self.y = 200
         self.dirX = 0
         self.dirY = 0
-        self.dir = 'right'
+        self.DirX = 'right'
+        self.DirY = 'up'
         self.frame = 0
         self.action = 0
+        self.snowBall = False
+        self.startMake = 0
+        self.endMake = 0
 
         self.machine = Machine(
             model=self,
@@ -24,8 +29,10 @@ class Charecter:
                  'source': ['THROW', 'IDLE', 'MAKE', 'RUN'], 'dest': 'HIT'},
                 {'trigger': 'start_run',
                  'source': ['IDLE', 'MAKE', 'RUN', 'THROW'], 'dest': 'RUN'},
-                {'trigger': 'stop_run',
-                 'source': 'RUN', 'dest': 'IDLE'},
+                {'trigger': 'start_idle',
+                 'source': ['HIT', 'RUN', 'THROW', "MAKE"], 'dest': 'IDLE'},
+                {'trigger' : 'make_snowball',
+                 'source' : ['IDLE', 'MAKE'], 'dest' : 'MAKE'}, 
             ],
                 initial='IDLE',
                 auto_transitions=False,
@@ -33,12 +40,35 @@ class Charecter:
 
     def draw(self):
         if self.state in "RUN":
-            if self.dir == "right" : self.run.clip_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, self.x, self.y, 300, 300)
+            if self.DirX == "right" : self.run.clip_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, self.x, self.y, 300, 300)
             else : self.run.clip_composite_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, 0, 'h', self.x, self.y, 300, 300)
 
+        if self.state in "IDLE":
+            if self.DirX == "right" : self.make.clip_draw(0 * 720, 6 * 720, 720, 720, self.x, self.y, 300, 300)
+            else : self.make.clip_composite_draw(0 * 720, 6 * 720, 720, 720, 0, 'h', self.x, self.y, 300, 300)
+
+        if self.state in "MAKE":
+            if self.DirX == "right" : self.make.clip_draw(self.frame * 720, (6 - self.action) * 720, 720, 720, self.x, self.y, 300, 300)
+            else : self.make.clip_composite_draw(self.frame * 720, (6 - self.action) * 720, 720, 720, 0, 'h', self.x, self.y, 300, 300)
+
     def update(self):
-        if self.action < 5 : self.frame = (self.frame + 1) % 12
-        else : self.frame = (self.frame + 1) % 3
+        if self.state in "RUN":
+            if self.action < 5 : 
+                self.frame = (self.frame + 1) % 12
+                if self.frame == 11: 
+                    #self.action = (self.action + 1) % 5
+                    self.frame = 0
+            else : 
+                self.frame = (self.frame + 1) % 3
+                if self.frame == 2 : 
+                    #self.action = (self.action + 1) % 5
+                    self.frame = 0
+
+        if self.state in "MAKE":
+            self.frame = (self.frame + 1) % 12
+            if self.frame == 11 : 
+                self.action = (self.action + 1) % 6
+                self.frame = 0
 
         self.x += self.dirX * 5
         self.y += self.dirY * 5
@@ -51,36 +81,51 @@ class Charecter:
                 run_game = False
                 break
 
+            if self.state in ('IDLE', 'MAKE'):
+                if event.type == SDL_KEYDOWN and event.key == SDLK_LSHIFT:
+                    self.startMake = get_time()
+                    self.make_snowball()
+                elif self.state == "MAKE" and event.type == SDL_KEYUP:
+                    self.endMake = get_time()
+                    print(f"make time : {self.endMake - self.startMake}")
+                    MakeTime = self.endMake - self.startMake
+                    if MakeTime >= 0.87: self.snowBall = True
+                    self.start_idle()
+                    self.frame = 0
+                    self.action = 0
+
             if self.state in ('IDLE', 'MAKE', 'RUN', 'THROW'):
-               
+                
                 if event.type == SDL_KEYDOWN and event.key == SDLK_a:
+                    if self.DirX == "right" : self.dirX = 0
                     self.dirX -= 1
                     self.start_run()
-                    self.dir = "left"
-                elif event.type == SDL_KEYDOWN and event.key == SDLK_d:
+                    self.DirX = "left"
+                if event.type == SDL_KEYDOWN and event.key == SDLK_d:
+                    if self.DirX == "left" : self.dirX = 0
                     self.dirX += 1
                     self.start_run()
-                    self.dir = "right"
-                elif event.type == SDL_KEYDOWN and event.key == SDLK_w:
+                    self.DirX = "right"
+                if event.type == SDL_KEYDOWN and event.key == SDLK_w:
+                    if self.DirY == "down" : self.dirY = 0
                     self.dirY += 1
                     self.start_run()
-                    self.dir = "right"
-                elif event.type == SDL_KEYDOWN and event.key == SDLK_s:
+                    self.DirY = "up"
+                if event.type == SDL_KEYDOWN and event.key == SDLK_s:
+                    if self.DirY == "up" : self.dirY = 0
                     self.dirY -= 1
                     self.start_run()
-                    self.dir = "right"
-                elif event.type == SDL_KEYUP and event.key == SDLK_a:
-                    self.dirX += 1
-                    self.start_run()
-                elif event.type == SDL_KEYUP and event.key == SDLK_d:
-                    self.dirX -= 1
-                    self.start_run()
-                elif event.type == SDL_KEYUP and event.key == SDLK_w:
-                    self.dirY -= 1
-                    self.start_run()
-                elif event.type == SDL_KEYUP and event.key == SDLK_s:
-                    self.dirY += 1
-                    self.start_run()
+                    self.DirY = "down"
+                elif self.state in "RUN" and event.type == SDL_KEYUP:
+                    self.start_idle()
+                    if self.dirX < 0 : self.dirX += 1
+                    elif self.dirX > 0 : self.dirX -= 1
+
+                    if self.dirY < 0 : self.dirY += 1
+                    elif self.dirY > 0 : self.dirY -= 1 
+
+                    self.frame = 0
+                    self.action = 0
 
         return run_game
             
