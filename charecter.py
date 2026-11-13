@@ -1,6 +1,15 @@
 from pico2d import *
 from transitions import Machine
 
+class Snow:
+    def __init__(self, x, y):
+        self.x = x + 50
+        self.y = y + 20
+        self.SnowBall = load_image("SnowBall.png")
+
+    def draw(self):
+        self.SnowBall.draw(self.x, self.y, 100, 100)
+
 class Charecter:
     def __init__(self):
         self.run = load_image("run1.png")
@@ -20,6 +29,7 @@ class Charecter:
         self.endMake = 0
         self.Mx = 0
         self.My = 0
+        
 
         self.machine = Machine(
             model=self,
@@ -55,6 +65,7 @@ class Charecter:
 
         if self.state in "THROW":
             self.throw.clip_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, self.x, self.y, 300 - (self.y * 0.2), 300 - (self.y * 0.2))
+            self.Snow.draw()
 
     def update(self):
         if self.state in "RUN":
@@ -76,6 +87,11 @@ class Charecter:
                 self.frame = 0
 
         if self.state in "THROW":
+            moveX = abs(self.Mx - self.x) / 30
+            moveY = (800 - self.My - self.y) / 30
+
+            self.Snow.x += moveX
+            self.Snow.y += moveY
             if self.action < 5 : 
                 self.frame = (self.frame + 1) % 12
                 if self.frame == 11: 
@@ -105,6 +121,7 @@ class Charecter:
                         self.Mx = event.x
                         self.My = event.y
                         self.start_throw()
+                        self.Snow = Snow(self.x, self.y)
 
             if self.state in ('IDLE', 'MAKE'):
                 if event.type == SDL_KEYDOWN and event.key == SDLK_LSHIFT:
@@ -114,7 +131,7 @@ class Charecter:
                     self.endMake = get_time()
                     print(f"make time : {self.endMake - self.startMake}")
                     MakeTime = self.endMake - self.startMake
-                    if MakeTime >= 0.87: self.snowBall = True
+                    if MakeTime >= 0.75: self.snowBall = True
                     self.start_idle()
                     self.frame = 0
                     self.action = 0
