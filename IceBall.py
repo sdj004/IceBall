@@ -22,6 +22,7 @@ def fightSpace_Init():
     FightBackground = fightBack.Background()
 
 def update():
+    global player
     player.update()
 
 def drawScene():
@@ -37,13 +38,6 @@ def Process_event(run_game):
     global player
 
     run_game = player.ProcessEvent(run_game)
-
-    # events = get_events()
-
-    # for event in events:
-    #     if event.type == SDL_QUIT:
-    #         run_game = False
-    #         break
     
     return run_game
         

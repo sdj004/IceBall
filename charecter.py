@@ -10,6 +10,7 @@ class Charecter:
         self.y = 200
         self.dirX = 0
         self.dirY = 0
+        self.dir = 'right'
         self.frame = 0
         self.action = 0
 
@@ -32,9 +33,13 @@ class Charecter:
 
     def draw(self):
         if self.state in "RUN":
-            self.run.clip_draw(self.frame, self.action, 720, 720, self.x, self.y, 300, 300)
+            if self.dir == "right" : self.run.clip_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, self.x, self.y, 300, 300)
+            else : self.run.clip_composite_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, 0, 'h', self.x, self.y, 300, 300)
 
     def update(self):
+        if self.action < 5 : self.frame = (self.frame + 1) % 12
+        else : self.frame = (self.frame + 1) % 3
+
         self.x += self.dirX * 5
         self.y += self.dirY * 5
 
@@ -51,15 +56,19 @@ class Charecter:
                 if event.type == SDL_KEYDOWN and event.key == SDLK_a:
                     self.dirX -= 1
                     self.start_run()
+                    self.dir = "left"
                 elif event.type == SDL_KEYDOWN and event.key == SDLK_d:
                     self.dirX += 1
                     self.start_run()
+                    self.dir = "right"
                 elif event.type == SDL_KEYDOWN and event.key == SDLK_w:
                     self.dirY += 1
                     self.start_run()
+                    self.dir = "right"
                 elif event.type == SDL_KEYDOWN and event.key == SDLK_s:
                     self.dirY -= 1
                     self.start_run()
+                    self.dir = "right"
                 elif event.type == SDL_KEYUP and event.key == SDLK_a:
                     self.dirX += 1
                     self.start_run()
