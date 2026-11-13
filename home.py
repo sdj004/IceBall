@@ -5,12 +5,16 @@ class Home:
         self.image = load_image("mainBackground.png")
 
     def draw(self):
-        self.image.draw(600, 400)
+        self.image.draw(600, 400, 1200, 800)
 
-    def ProcessEvent():
+    def ProcessEvent(self, run_game):
         events = get_events()
 
         for event in events:
-            if event == SDL_KEYDOWN and event == SDLK_ESCAPE:
+            if event.type == SDL_QUIT:
                 close_canvas()
+            elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
+                close_canvas()
+            elif event.type == SDL_KEYDOWN and event.key == SDLK_RETURN:
+                run_game = True
             
