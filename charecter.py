@@ -88,8 +88,8 @@ class Charecter:
                     self.frame = 0
                     self.start_idle()
 
-        self.x += self.dirX * 5
-        self.y += self.dirY * 5
+        if self.x + self.dirX > 200 and self.x + self.dirX < 500 :  self.x += self.dirX * 5
+        if self.y + self.dirY > 200 and self.y + self.dirY < 500 : self.y += self.dirY * 5
 
     def ProcessEvent(self, run_game):
         events = get_events()
