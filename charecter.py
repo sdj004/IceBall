@@ -18,6 +18,8 @@ class Charecter:
         self.snowBall = False
         self.startMake = 0
         self.endMake = 0
+        self.Mx = 0
+        self.My = 0
 
         self.machine = Machine(
             model=self,
@@ -51,6 +53,9 @@ class Charecter:
             if self.DirX == "right" : self.make.clip_draw(self.frame * 720, (6 - self.action) * 720, 720, 720, self.x, self.y, 300, 300)
             else : self.make.clip_composite_draw(self.frame * 720, (6 - self.action) * 720, 720, 720, 0, 'h', self.x, self.y, 300, 300)
 
+        if self.state in "THROW":
+            self.throw.clip_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, self.x, self.y, 300, 300)
+
     def update(self):
         if self.state in "RUN":
             if self.action < 5 : 
@@ -67,8 +72,21 @@ class Charecter:
         if self.state in "MAKE":
             self.frame = (self.frame + 1) % 12
             if self.frame == 11 : 
-                self.action = (self.action + 1) % 6
+                self.action = (self.action + 1) % 7
                 self.frame = 0
+
+        if self.state in "THROW":
+            if self.action < 5 : 
+                self.frame = (self.frame + 1) % 12
+                if self.frame == 11: 
+                    self.action = (self.action + 1) % 6
+                    self.frame = 0
+            else : 
+                self.frame = (self.frame + 1) % 3
+                if self.frame == 2 : 
+                    self.action = (self.action + 1) % 6
+                    self.frame = 0
+                    self.start_idle()
 
         self.x += self.dirX * 5
         self.y += self.dirY * 5
@@ -80,6 +98,13 @@ class Charecter:
             if event.type == SDL_QUIT:
                 run_game = False
                 break
+
+            if self.state in ('RUN', 'IDLE', 'MAKE'):
+                if event.type == SDL_MOUSEBUTTONDOWN:
+                    if self.snowBall == True :
+                        self.Mx = event.x
+                        self.My = event.y
+                        self.start_throw()
 
             if self.state in ('IDLE', 'MAKE'):
                 if event.type == SDL_KEYDOWN and event.key == SDLK_LSHIFT:
