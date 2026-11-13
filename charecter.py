@@ -42,19 +42,19 @@ class Charecter:
 
     def draw(self):
         if self.state in "RUN":
-            if self.DirX == "right" : self.run.clip_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, self.x, self.y, 300, 300)
-            else : self.run.clip_composite_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, 0, 'h', self.x, self.y, 300, 300)
+            if self.DirX == "right" : self.run.clip_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, self.x, self.y, 300 - (self.y * 0.2), 300 - (self.y * 0.2))
+            else : self.run.clip_composite_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, 0, 'h', self.x, self.y, 300 - (self.y * 0.2), 300 - (self.y * 0.2))
 
         if self.state in "IDLE":
-            if self.DirX == "right" : self.make.clip_draw(0 * 720, 6 * 720, 720, 720, self.x, self.y, 300, 300)
-            else : self.make.clip_composite_draw(0 * 720, 6 * 720, 720, 720, 0, 'h', self.x, self.y, 300, 300)
+            if self.DirX == "right" : self.make.clip_draw(0 * 720, 6 * 720, 720, 720, self.x, self.y, 300 - (self.y * 0.2), 300 - (self.y * 0.2))
+            else : self.make.clip_composite_draw(0 * 720, 6 * 720, 720, 720, 0, 'h', self.x, self.y, 300 - (self.y * 0.2), 300 - (self.y * 0.2))
 
         if self.state in "MAKE":
-            if self.DirX == "right" : self.make.clip_draw(self.frame * 720, (6 - self.action) * 720, 720, 720, self.x, self.y, 300, 300)
-            else : self.make.clip_composite_draw(self.frame * 720, (6 - self.action) * 720, 720, 720, 0, 'h', self.x, self.y, 300, 300)
+            if self.DirX == "right" : self.make.clip_draw(self.frame * 720, (6 - self.action) * 720, 720, 720, self.x, self.y, 300 - (self.y * 0.2), 300 - (self.y * 0.2))
+            else : self.make.clip_composite_draw(self.frame * 720, (6 - self.action) * 720, 720, 720, 0, 'h', self.x, self.y, 300 - (self.y * 0.2), 300 - (self.y * 0.2))
 
         if self.state in "THROW":
-            self.throw.clip_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, self.x, self.y, 300, 300)
+            self.throw.clip_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, self.x, self.y, 300 - (self.y * 0.2), 300 - (self.y * 0.2))
 
     def update(self):
         if self.state in "RUN":
@@ -89,7 +89,7 @@ class Charecter:
                     self.start_idle()
 
         if self.x + self.dirX > 200 and self.x + self.dirX < 500 :  self.x += self.dirX * 5
-        if self.y + self.dirY > 200 and self.y + self.dirY < 500 : self.y += self.dirY * 5
+        if self.y + self.dirY > 200 and self.y + self.dirY < 400 : self.y += self.dirY * 5
 
     def ProcessEvent(self, run_game):
         events = get_events()
