@@ -16,26 +16,42 @@ def mainHome_Init():
 
 def fightSpace_Init():
     global FightBackground
+    global player
 
+    player = charecter.Charecter()
     FightBackground = fightBack.Background()
 
 def update():
-    pass
+    player.update()
 
 def drawScene():
     clear_canvas()
 
     FightBackground.draw()
 
+    player.draw()
+
     update_canvas()
 
-def Process_event():
-    pass
+def Process_event(run_game):
+    global player
+
+    run_game = player.ProcessEvent(run_game)
+
+    # events = get_events()
+
+    # for event in events:
+    #     if event.type == SDL_QUIT:
+    #         run_game = False
+    #         break
+    
+    return run_game
+        
 
 def draw_Logo():
     open_canvas(400, 250)
     clear_canvas()
-    Logo_Init();
+    Logo_Init()
     schoolLogo.draw()
     update_canvas()
     delay(2)
@@ -73,15 +89,12 @@ if run_game == True :
     print("enter fight map")
 
 while run_game:
-    clear_canvas()
 
-    Process_event()
+    run_game = Process_event(run_game)
 
     update()
 
     drawScene()
-
-    update_canvas()
 
     delay(0.1)
 
