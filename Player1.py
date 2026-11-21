@@ -12,7 +12,7 @@ class Snow:
     def draw(self):
         self.SnowBall.draw(self.x, self.y, self.xSize, self.ySize)
 
-class Charecter:
+class Player1:
     def __init__(self):
         self.run = load_image("run1.png")
         self.hit = load_image("hit1.png")

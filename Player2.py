@@ -12,13 +12,13 @@ class Snow:
     def draw(self):
         self.SnowBall.draw(self.x, self.y, self.xSize, self.ySize)
 
-class Charecter:
+class Player2:
     def __init__(self):
-        self.run = load_image("run1.png")
-        self.hit = load_image("hit1.png")
-        self.throw = load_image("throwSnowBall1.png")
-        self.make = load_image("makeSnowBall1.png")
-        self.x = 200
+        self.run = load_image("run2.png")
+        self.hit = load_image("hit2.png")
+        self.throw = load_image("throwSnowBall2.png")
+        self.make = load_image("makeSnowBall2.png")
+        self.x = 1000
         self.y = 200
         self.dirX = 0
         self.dirY = 0
@@ -107,7 +107,7 @@ class Charecter:
                     self.frame = 0
                     self.start_idle()
 
-        if self.x + self.dirX > 200 and self.x + self.dirX < 500 :  self.x += self.dirX * 5
+        if self.x + self.dirX > 700 and self.x + self.dirX < 1100 :  self.x += self.dirX * 5
         if self.y + self.dirY > 200 and self.y + self.dirY < 400 : self.y += self.dirY * 5
 
     def ProcessEvent(self, run_game):
@@ -127,7 +127,7 @@ class Charecter:
                         self.Snow = Snow(self.x, self.y)
 
             if self.state in ('IDLE', 'MAKE'):
-                if event.type == SDL_KEYDOWN and event.key == SDLK_LSHIFT:
+                if event.type == SDL_KEYDOWN and event.key == SDLK_RSHIFT:
                     self.startMake = get_time()
                     self.make_snowball()
                 elif self.state == "MAKE" and event.type == SDL_KEYUP:
@@ -141,22 +141,22 @@ class Charecter:
 
             if self.state in ('IDLE', 'MAKE', 'RUN', 'THROW'):
                 
-                if event.type == SDL_KEYDOWN and event.key == SDLK_a:
+                if event.type == SDL_KEYDOWN and event.key == SDLK_j:
                     if self.DirX == "right" : self.dirX = 0
                     self.dirX -= 1
                     self.start_run()
                     self.DirX = "left"
-                if event.type == SDL_KEYDOWN and event.key == SDLK_d:
+                if event.type == SDL_KEYDOWN and event.key == SDLK_l:
                     if self.DirX == "left" : self.dirX = 0
                     self.dirX += 1
                     self.start_run()
                     self.DirX = "right"
-                if event.type == SDL_KEYDOWN and event.key == SDLK_w:
+                if event.type == SDL_KEYDOWN and event.key == SDLK_i:
                     if self.DirY == "down" : self.dirY = 0
                     self.dirY += 1
                     self.start_run()
                     self.DirY = "up"
-                if event.type == SDL_KEYDOWN and event.key == SDLK_s:
+                if event.type == SDL_KEYDOWN and event.key == SDLK_k:
                     if self.DirY == "up" : self.dirY = 0
                     self.dirY -= 1
                     self.start_run()

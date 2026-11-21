@@ -1,6 +1,7 @@
 from pico2d import *
 import Logo
-import charecter 
+import Player1
+import Player2 
 import home
 import fightBack
 
@@ -16,28 +17,32 @@ def mainHome_Init():
 
 def fightSpace_Init():
     global FightBackground
-    global player
+    global player1, player2
 
-    player = charecter.Charecter()
+    player1 = Player1.Player1()
+    player2 = Player2.Player2()
     FightBackground = fightBack.Background()
 
 def update():
-    global player
-    player.update()
+    global player1, player2
+    player1.update()
+    player2.update()
 
 def drawScene():
     clear_canvas()
 
     FightBackground.draw()
 
-    player.draw()
+    player1.draw()
+    player2.draw()
 
     update_canvas()
 
 def Process_event(run_game):
-    global player
+    global player1, player2
 
-    run_game = player.ProcessEvent(run_game)
+    run_game = player1.ProcessEvent(run_game)
+    run_game = player2.ProcessEvent(run_game)
     
     return run_game
         
@@ -81,7 +86,7 @@ draw_home()
 if run_game == True : 
     fightSpace_Init()
     print("enter fight map")
-    
+
 
 while run_game:
 
