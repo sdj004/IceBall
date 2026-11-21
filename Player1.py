@@ -34,6 +34,7 @@ class Player1:
         self.xSize = 300
         self.ySize = 300
         self.makeTime = 0.75
+        self.Snow = Snow(self.x, self.y)
 
         self.machine = Machine(
             model=self,
@@ -111,8 +112,7 @@ class Player1:
         if self.x + self.dirX > 200 and self.x + self.dirX < 500 :  self.x += self.dirX * 5
         if self.y + self.dirY > 200 and self.y + self.dirY < 400 : self.y += self.dirY * 5
 
-    def ProcessEvent(self, run_game):
-        events = get_events()
+    def ProcessEvent(self, run_game, events):
 
         for event in events:
             if event.type == SDL_QUIT:
@@ -125,7 +125,7 @@ class Player1:
                         self.Mx = event.x
                         self.My = event.y
                         self.start_throw()
-                        self.Snow = Snow(self.x, self.y)
+                        
 
             if self.state in ('IDLE', 'MAKE'):
                 if event.type == SDL_KEYDOWN and event.key == SDLK_LSHIFT:
@@ -141,27 +141,30 @@ class Player1:
                     self.action = 0
 
             if self.state in ('IDLE', 'MAKE', 'RUN', 'THROW'):
-                
                 if event.type == SDL_KEYDOWN and event.key == SDLK_a:
                     if self.DirX == "right" : self.dirX = 0
                     self.dirX -= 1
                     self.start_run()
                     self.DirX = "left"
+                    print("left")
                 if event.type == SDL_KEYDOWN and event.key == SDLK_d:
                     if self.DirX == "left" : self.dirX = 0
                     self.dirX += 1
                     self.start_run()
                     self.DirX = "right"
+                    print("right")
                 if event.type == SDL_KEYDOWN and event.key == SDLK_w:
                     if self.DirY == "down" : self.dirY = 0
                     self.dirY += 1
                     self.start_run()
                     self.DirY = "up"
+                    print("up")
                 if event.type == SDL_KEYDOWN and event.key == SDLK_s:
                     if self.DirY == "up" : self.dirY = 0
                     self.dirY -= 1
                     self.start_run()
                     self.DirY = "down"
+                    print("down")
                 elif self.state in "RUN" and event.type == SDL_KEYUP:
                     self.start_idle()
                     if self.dirX < 0 : self.dirX += 1
@@ -172,6 +175,7 @@ class Player1:
 
                     self.frame = 0
                     self.action = 0
+                    print("None")
 
         return run_game
             

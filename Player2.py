@@ -111,8 +111,7 @@ class Player2:
         if self.x + self.dirX > 700 and self.x + self.dirX < 1100 :  self.x += self.dirX * 5
         if self.y + self.dirY > 200 and self.y + self.dirY < 400 : self.y += self.dirY * 5
 
-    def ProcessEvent(self, run_game):
-        events = get_events()
+    def ProcessEvent(self, run_game, events):
 
         for event in events:
             if event.type == SDL_QUIT:

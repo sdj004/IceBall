@@ -47,8 +47,10 @@ def drawScene():
 def Process_event(run_game):
     global player1, player2
 
-    run_game = player1.ProcessEvent(run_game)
-    run_game = player2.ProcessEvent(run_game)
+    events = get_events()
+
+    run_game = player1.ProcessEvent(run_game, events)
+    run_game = player2.ProcessEvent(run_game, events)
     
     return run_game
         
