@@ -135,7 +135,10 @@ class Player1:
                     self.endMake = get_time()
                     print(f"make time : {self.endMake - self.startMake}")
                     MakeTime = self.endMake - self.startMake
-                    if MakeTime >= self.makeTime: self.snowBall = True
+                    if MakeTime >= self.makeTime: 
+                        self.snowBall = True
+                        self.Snow.x = self.x + 50
+                        self.Snow.y = self.y + 20
                     self.start_idle()
                     self.frame = 0
                     self.action = 0
