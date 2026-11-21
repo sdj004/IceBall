@@ -5,10 +5,12 @@ class Snow:
     def __init__(self, x, y):
         self.x = x + 50
         self.y = y + 20
+        self.xSize = 100
+        self.ySize = 100
         self.SnowBall = load_image("SnowBall.png")
 
     def draw(self):
-        self.SnowBall.draw(self.x, self.y, 100, 100)
+        self.SnowBall.draw(self.x, self.y, self.xSize, self.ySize)
 
 class Charecter:
     def __init__(self):
@@ -29,7 +31,8 @@ class Charecter:
         self.endMake = 0
         self.Mx = 0
         self.My = 0
-        
+        self.xSize = 300
+        self.ySize = 300
 
         self.machine = Machine(
             model=self,
@@ -52,19 +55,19 @@ class Charecter:
 
     def draw(self):
         if self.state in "RUN":
-            if self.DirX == "right" : self.run.clip_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, self.x, self.y, 300 - (self.y * 0.2), 300 - (self.y * 0.2))
-            else : self.run.clip_composite_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, 0, 'h', self.x, self.y, 300 - (self.y * 0.2), 300 - (self.y * 0.2))
+            if self.DirX == "right" : self.run.clip_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, self.x, self.y, self.xSize - (self.y * 0.2), self.ySize - (self.y * 0.2))
+            else : self.run.clip_composite_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, 0, 'h', self.x, self.y, self.xSize - (self.y * 0.2), self.ySize - (self.y * 0.2))
 
         if self.state in "IDLE":
-            if self.DirX == "right" : self.make.clip_draw(0 * 720, 6 * 720, 720, 720, self.x, self.y, 300 - (self.y * 0.2), 300 - (self.y * 0.2))
-            else : self.make.clip_composite_draw(0 * 720, 6 * 720, 720, 720, 0, 'h', self.x, self.y, 300 - (self.y * 0.2), 300 - (self.y * 0.2))
+            if self.DirX == "right" : self.make.clip_draw(0 * 720, 6 * 720, 720, 720, self.x, self.y, self.xSize - (self.y * 0.2), self.ySize - (self.y * 0.2))
+            else : self.make.clip_composite_draw(0 * 720, 6 * 720, 720, 720, 0, 'h', self.x, self.y, self.xSize - (self.y * 0.2), self.ySize - (self.y * 0.2))
 
         if self.state in "MAKE":
-            if self.DirX == "right" : self.make.clip_draw(self.frame * 720, (6 - self.action) * 720, 720, 720, self.x, self.y, 300 - (self.y * 0.2), 300 - (self.y * 0.2))
-            else : self.make.clip_composite_draw(self.frame * 720, (6 - self.action) * 720, 720, 720, 0, 'h', self.x, self.y, 300 - (self.y * 0.2), 300 - (self.y * 0.2))
+            if self.DirX == "right" : self.make.clip_draw(self.frame * 720, (6 - self.action) * 720, 720, 720, self.x, self.y, self.xSize - (self.y * 0.2), self.ySize - (self.y * 0.2))
+            else : self.make.clip_composite_draw(self.frame * 720, (6 - self.action) * 720, 720, 720, 0, 'h', self.x, self.y, self.xSize - (self.y * 0.2), self.ySize - (self.y * 0.2))
 
         if self.state in "THROW":
-            self.throw.clip_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, self.x, self.y, 300 - (self.y * 0.2), 300 - (self.y * 0.2))
+            self.throw.clip_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, self.x, self.y, self.ySize - (self.y * 0.2), self.ySize - (self.y * 0.2))
             self.Snow.draw()
 
     def update(self):

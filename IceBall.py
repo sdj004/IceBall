@@ -81,6 +81,7 @@ draw_home()
 if run_game == True : 
     fightSpace_Init()
     print("enter fight map")
+    
 
 while run_game:
 
