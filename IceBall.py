@@ -4,6 +4,7 @@ import Player1
 import Player2 
 import home
 import fightBack
+import Power
 
 def Logo_Init():
     global schoolLogo
@@ -18,10 +19,12 @@ def mainHome_Init():
 def fightSpace_Init():
     global FightBackground
     global player1, player2
+    global randomPower
 
     player1 = Player1.Player1()
     player2 = Player2.Player2()
     FightBackground = fightBack.Background()
+    randomPower = Power.Power()
 
 def update():
     global player1, player2
@@ -35,6 +38,9 @@ def drawScene():
 
     player1.draw()
     player2.draw()
+    if randomPower.draw:
+        randomPower.ShowGetPower(1)
+        randomPower.ShowGetPower(2)
 
     update_canvas()
 
@@ -75,8 +81,6 @@ def draw_home():
 
 draw_Logo()
 
-#draw_Logo()
-
 open_canvas(1200, 800)
 
 mainHome_Init()
@@ -89,12 +93,27 @@ if run_game == True :
 
 
 while run_game:
+    randomPower.endTime = get_time()
 
+    if randomPower.endTime - randomPower.startTime > 30:
+        randomPower.GetPower(player1)
+        randomPower.GetPower(player2)
+        randomPower.startTime = randomPower.endTime
+        randomPower.ShowGetPower(1)
+        randomPower.ShowGetPower(2)
+        print("Get random Power")
+        randomPower.draw = True
+
+
+    
     run_game = Process_event(run_game)
 
     update()
 
     drawScene()
+    if randomPower.draw:
+        delay(2)
+        randomPower.draw = False
 
     delay(0.01)
 

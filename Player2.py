@@ -33,6 +33,7 @@ class Player2:
         self.My = 0
         self.xSize = 300
         self.ySize = 300
+        self.makeTime = 0.75
 
         self.machine = Machine(
             model=self,
@@ -134,7 +135,7 @@ class Player2:
                     self.endMake = get_time()
                     print(f"make time : {self.endMake - self.startMake}")
                     MakeTime = self.endMake - self.startMake
-                    if MakeTime >= 0.75: self.snowBall = True
+                    if MakeTime >= self.makeTime: self.snowBall = True
                     self.start_idle()
                     self.frame = 0
                     self.action = 0
