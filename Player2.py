@@ -128,7 +128,7 @@ class Player2:
                         
 
             if self.state in ('IDLE', 'MAKE'):
-                if event.type == SDL_KEYDOWN and event.key == SDLK_RSHIFT:
+                if event.type == SDL_KEYDOWN and event.key == SDLK_KP_0:
                     self.startMake = get_time()
                     self.make_snowball()
                 elif self.state == "MAKE" and event.type == SDL_KEYUP:
@@ -145,22 +145,22 @@ class Player2:
 
             if self.state in ('IDLE', 'MAKE', 'RUN', 'THROW'):
                 
-                if event.type == SDL_KEYDOWN and event.key == SDLK_j:
+                if event.type == SDL_KEYDOWN and event.key == SDLK_LEFT:
                     if self.DirX == "right" : self.dirX = 0
                     self.dirX -= 1
                     self.start_run()
                     self.DirX = "left"
-                if event.type == SDL_KEYDOWN and event.key == SDLK_l:
+                if event.type == SDL_KEYDOWN and event.key == SDLK_RIGHT:
                     if self.DirX == "left" : self.dirX = 0
                     self.dirX += 1
                     self.start_run()
                     self.DirX = "right"
-                if event.type == SDL_KEYDOWN and event.key == SDLK_i:
+                if event.type == SDL_KEYDOWN and event.key == SDLK_UP:
                     if self.DirY == "down" : self.dirY = 0
                     self.dirY += 1
                     self.start_run()
                     self.DirY = "up"
-                if event.type == SDL_KEYDOWN and event.key == SDLK_k:
+                if event.type == SDL_KEYDOWN and event.key == SDLK_DOWN:
                     if self.DirY == "up" : self.dirY = 0
                     self.dirY -= 1
                     self.start_run()
