@@ -34,6 +34,7 @@ class Player2:
         self.xSize = 300
         self.ySize = 300
         self.makeTime = 0.75
+        self.Snow = Snow(self.x, self.y)
 
         self.machine = Machine(
             model=self,
@@ -92,7 +93,7 @@ class Player2:
 
         if self.state in "THROW":
             moveX = abs(self.Mx - self.x) / 30
-            moveY = (800 - self.My - self.y) / 30
+            moveY = (self.My - self.y) / 45
 
             self.Snow.x -= moveX
             self.Snow.y += moveY
@@ -111,7 +112,7 @@ class Player2:
         if self.x + self.dirX > 700 and self.x + self.dirX < 1100 :  self.x += self.dirX * 5
         if self.y + self.dirY > 200 and self.y + self.dirY < 400 : self.y += self.dirY * 5
 
-    def ProcessEvent(self, run_game, events):
+    def ProcessEvent(self, run_game, events, player):
 
         for event in events:
             if event.type == SDL_QUIT:
@@ -119,12 +120,12 @@ class Player2:
                 break
 
             if self.state in ('RUN', 'IDLE', 'MAKE'):
-                if event.type == SDL_MOUSEBUTTONDOWN:
+                if event.type == SDL_KEYDOWN and event.key == SDLK_SPACE:
                     if self.snowBall == True :
-                        self.Mx = event.x
-                        self.My = event.y
+                        self.Mx = player.x
+                        self.My = player.y
                         self.start_throw()
-                        self.Snow = Snow(self.x, self.y)
+                        
 
             if self.state in ('IDLE', 'MAKE'):
                 if event.type == SDL_KEYDOWN and event.key == SDLK_RSHIFT:
@@ -134,7 +135,10 @@ class Player2:
                     self.endMake = get_time()
                     print(f"make time : {self.endMake - self.startMake}")
                     MakeTime = self.endMake - self.startMake
-                    if MakeTime >= self.makeTime: self.snowBall = True
+                    if MakeTime >= self.makeTime: 
+                        self.snowBall = True
+                        self.Snow.x = self.x - 50
+                        self.Snow.y = self.y + 20
                     self.start_idle()
                     self.frame = 0
                     self.action = 0

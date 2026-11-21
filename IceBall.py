@@ -50,7 +50,7 @@ def Process_event(run_game):
     events = get_events()
 
     run_game = player1.ProcessEvent(run_game, events)
-    run_game = player2.ProcessEvent(run_game, events)
+    run_game = player2.ProcessEvent(run_game, events, player1)
     
     return run_game
         
