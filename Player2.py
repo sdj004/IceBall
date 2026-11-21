@@ -68,7 +68,7 @@ class Player2:
             else : self.make.clip_composite_draw(self.frame * 720, (6 - self.action) * 720, 720, 720, 0, 'h', self.x, self.y, self.xSize - (self.y * 0.2), self.ySize - (self.y * 0.2))
 
         if self.state in "THROW":
-            self.throw.clip_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, self.x, self.y, self.ySize - (self.y * 0.2), self.ySize - (self.y * 0.2))
+            self.throw.clip_composite_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, 0, 'h', self.x, self.y, self.ySize - (self.y * 0.2), self.ySize - (self.y * 0.2))
             self.Snow.draw()
 
     def update(self):
@@ -94,7 +94,7 @@ class Player2:
             moveX = abs(self.Mx - self.x) / 30
             moveY = (800 - self.My - self.y) / 30
 
-            self.Snow.x += moveX
+            self.Snow.x -= moveX
             self.Snow.y += moveY
             if self.action < 5 : 
                 self.frame = (self.frame + 1) % 12
