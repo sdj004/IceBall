@@ -66,6 +66,9 @@ class Player1:
         self.STRIDE_LENGTH_M = 0.8
         self.RUN_FRAMES_PER_STRIDE = 12
         self.RUN_FRAMES_PER_SECOND = self.RUN_SPEED_MPS / self.STRIDE_LENGTH_M * self.RUN_FRAMES_PER_STRIDE
+        self.MAKE_ACTION_COUNT = 7
+        self.MAKE_FRAMES_PER_ACTION = 12
+        self.make_frame_progress = 0.0
         self.run_frame_progress = 0.0
 
         self.machine = Machine(
@@ -137,10 +140,16 @@ class Player1:
             self.frame = int(self.run_frame_progress)
 
         if self.state in "MAKE":
-            self.frame = (self.frame + 1) % 12
-            if self.frame == 11 : 
-                self.action = (self.action + 1) % 7
-                self.frame = 0
+            total_frames = self.MAKE_ACTION_COUNT * self.MAKE_FRAMES_PER_ACTION
+            frames_per_second = total_frames / self.makeTime
+            self.make_frame_progress = min(
+                self.make_frame_progress + frames_per_second * frame_work.frame_time,
+                total_frames - 1,
+            )
+            frame_index = int(self.make_frame_progress)
+            self.action, self.frame = divmod(
+                frame_index, self.MAKE_FRAMES_PER_ACTION
+            )
 
         if self.state in "THROW":
             self.Snow.update(self.Mx, self.My, self.x, self.y)
@@ -200,6 +209,9 @@ class Player1:
                     and event.key == SDLK_LSHIFT
                 ):
                     self.startMake = get_time()
+                    self.make_frame_progress = 0.0
+                    self.action = 0
+                    self.frame = 0
                     self.make_snowball()
                 elif (
                     self.state == "MAKE"
@@ -209,7 +221,7 @@ class Player1:
                     self.endMake = get_time()
                     print(f"make time : {self.endMake - self.startMake}")
                     MakeTime = self.endMake - self.startMake
-                    if MakeTime >= self.makeTime: 
+                    if MakeTime >= self.makeTime - 0.1: 
                         self.snowBall = True
                         self.Snow.x = self.x + 50
                         self.Snow.y = self.y + 20
