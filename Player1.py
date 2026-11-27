@@ -3,6 +3,7 @@ from transitions import Machine
 import frame_work
 import math
 import game_world
+import pico2d.pico2d as pico2d_core
 
 class Snow:
     def __init__(self, x, y):
@@ -101,7 +102,27 @@ class Player1:
             self.throw.clip_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, self.x, self.y, self.ySize - (self.y * 0.2), self.ySize - (self.y * 0.2))
             self.Snow.draw()
 
+        if self.state in "HIT":
+            pico2d_core.SDL_SetRenderDrawBlendMode(
+                pico2d_core.renderer,
+                pico2d_core.SDL_BLENDMODE_BLEND,
+            )
+            draw_circle(self.x, self.y, 150, 255, 0, 0, 127, True)
+            if self.DirX == "right" : self.hit.clip_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, self.x, self.y, self.ySize - (self.y * 0.2), self.ySize - (self.y * 0.2))
+            else : self.hit.clip_composite_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, 0, 'h', self.x, self.y, self.xSize - (self.y * 0.2), self.ySize - (self.y * 0.2))
+
     def update(self):
+        if self.state in "HIT":
+            if self.action == 5: 
+                self.frame = (self.frame + 1) % 3
+                if self.frame == 2 :
+                    self.start_idle()
+            else : 
+                self.frame = (self.frame + 1) % 12
+                if self.frame == 11:
+                    self.action = (self.action + 1) % 6
+                    self.frame = 0
+
         if self.state in "RUN":
             frame_count = self.RUN_FRAMES_PER_STRIDE
             frames_per_second = self.RUN_FRAMES_PER_SECOND
@@ -184,6 +205,7 @@ class Player1:
                     self.run_frame_progress = 0.0
 
             if self.state in ('IDLE', 'MAKE', 'RUN', 'THROW'):
+                self.action = 0
                 if event.type == SDL_KEYDOWN and event.key == SDLK_a:
                     if self.DirX == "right" : self.dirX = 0.0
                     self.dirX -= 1.0
@@ -229,10 +251,15 @@ class Player1:
         elif 2 <= self.action <= 4 and self.state in "MAKE" : return self.x - 50, self.y - 115, self.x + 50, self.y + 70
         elif (self.action <= 1 or self.action >= 5) and self.state in "MAKE" : return self.x - 50, self.y - 110, self.x + 50, self.y + 100
         elif self.state in "THROW" : return self.x - 40, self.y - 110, self.x + 40, self.y + 110
+        elif self.state in "HIT" : return self.x - 60, self.y - 100, self.x + 60, self.y + 100
 
     def handle_collision(self, group, other):
         global game_framework
         
         if group == "player1:snowball":
             print("player 1: out")
+            if self.state != "HIT" : 
+                self.start_hit()
+                self.action = 0
+                self.frame = 0
        

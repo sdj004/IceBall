@@ -41,8 +41,8 @@ class Power:
             player.xSize = 500
             player.ySize = 500
         elif index == 5:
-            player.xSize = 100
-            player.ySize = 100
+            player.xSize = 150
+            player.ySize = 150
         elif index == 6:
             pass
         elif index == 7:
