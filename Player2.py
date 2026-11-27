@@ -238,12 +238,42 @@ class Player2:
         return run_game
 
     def get_bb(self):
-        if self.state in "RUN" : return self.x - 60, self.y - 100, self.x + 60, self.y + 100
-        elif self.state in "IDLE" : return self.x - 25, self.y - 110, self.x + 25, self.y + 110
-        elif 2 <= self.action <= 4 and self.state in "MAKE" : return self.x - 50, self.y - 115, self.x + 50, self.y + 70
-        elif (self.action <= 1 or self.action >= 5) and self.state in "MAKE" : return self.x - 50, self.y - 110, self.x + 50, self.y + 100
-        elif self.state in "THROW" : return self.x - 40, self.y - 110, self.x + 40, self.y + 110
-        elif self.state in "HIT" : return self.x - 60, self.y - 100, self.x + 60, self.y + 100
+        if self.state in "RUN":
+            bounds = (-60, -100, 60, 100)
+        elif self.state in "IDLE":
+            bounds = (-25, -110, 25, 110)
+        elif self.state in "MAKE" and 2 <= self.action <= 4:
+            bounds = (-50, -115, 50, 70)
+        elif self.state in "MAKE":
+            bounds = (-50, -110, 50, 100)
+        elif self.state in "THROW":
+            bounds = (-40, -110, 40, 110)
+        elif self.state in "HIT":
+            bounds = (-60, -100, 60, 100)
+        else:
+            return None
+
+        if self.xSize > 300.0:
+            scale_x = 1.0 + (self.xSize - 300.0) / 300.0
+        elif self.xSize < 300.0:
+            scale_x = 1.0 - (300.0 - self.xSize) / 300.0
+        else:
+            scale_x = 1.0
+
+        if self.ySize > 300.0:
+            scale_y = 1.0 + (self.ySize - 300.0) / 300.0
+        elif self.ySize < 300.0:
+            scale_y = 1.0 - (300.0 - self.ySize) / 300.0
+        else:
+            scale_y = 1.0
+
+        left, bottom, right, top = bounds
+        return (
+            self.x + left * scale_x,
+            self.y + bottom * scale_y,
+            self.x + right * scale_x,
+            self.y + top * scale_y,
+        )
     
     def handle_collision(self, group, other):
         global game_framework
