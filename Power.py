@@ -22,11 +22,20 @@ class Power:
         self.CardSize = 500
         self.GiftBoxSize = 200
         self.shoulddraw = False
+        self.player1_got = set({})
+        self.player2_got = set({})
 
-    def GetPower(self, player):
+    def GetPower(self, player, who):
         index = random.randint(0, 8)
+
+        if who == 1:
+            while index in self.player1_got : index = random.randint(0, 8)
+        else : 
+            while index in self.player2_got : index = random.randint(0, 8)
         
         self.power = index
+        if who == 1 : self.player1_got.add(index)
+        else : self.player2_got.add(index)
 
         if index == 0:
             player.makeTime = 0.325

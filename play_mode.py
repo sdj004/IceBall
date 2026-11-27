@@ -57,8 +57,8 @@ class PlayMode:
         game_world.update()
         now = get_time()
         if now - self.power.startTime >= POWER_INTERVAL:
-            self.power.GetPower(self.player1)
-            self.power.GetPower(self.player2)
+            self.power.GetPower(self.player1, 1)
+            self.power.GetPower(self.player2, 2)
             self.power.startTime = now
             self.power.shoulddraw = True
             self.power_display_until = now + POWER_DISPLAY_DURATION

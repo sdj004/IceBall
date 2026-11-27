@@ -5,6 +5,7 @@ import math
 import game_world
 import pico2d.pico2d as pico2d_core
 
+mouseclick = 0
 class Snow:
     def __init__(self, x, y):
         self.x = x + 50.0
@@ -116,6 +117,8 @@ class Player1:
             if self.action == 5: 
                 self.frame = (self.frame + 1) % 3
                 if self.frame == 2 :
+                    self.action = 0
+                    self.frame = 0
                     self.start_idle()
             else : 
                 self.frame = (self.frame + 1) % 12
@@ -149,7 +152,7 @@ class Player1:
             else : 
                 self.frame = (self.frame + 1) % 3
                 if self.frame == 2 : 
-                    self.action = (self.action + 1) % 6
+                    self.action = 0
                     self.frame = 0
                     self.start_idle()
 
@@ -171,7 +174,7 @@ class Player1:
             self.y = next_y
 
     def ProcessEvent(self, run_game, events, player2):
-
+        global mouseclick
         for event in events:
             if event.type == SDL_QUIT:
                 run_game = False
@@ -184,14 +187,24 @@ class Player1:
                         self.My = event.y
                         self.start_throw()
                         self.Snow.exist = True
+                        print(f"{mouseclick} : mouse click")
+                        mouseclick += 1
                         game_world.add_collision_pair("player2:snowball", player2, self.Snow)
                         
 
             if self.state in ('IDLE', 'MAKE'):
-                if event.type == SDL_KEYDOWN and event.key == SDLK_LSHIFT:
+                if (
+                    self.state == "IDLE"
+                    and event.type == SDL_KEYDOWN
+                    and event.key == SDLK_LSHIFT
+                ):
                     self.startMake = get_time()
                     self.make_snowball()
-                elif self.state == "MAKE" and event.type == SDL_KEYUP:
+                elif (
+                    self.state == "MAKE"
+                    and event.type == SDL_KEYUP
+                    and event.key == SDLK_LSHIFT
+                ):
                     self.endMake = get_time()
                     print(f"make time : {self.endMake - self.startMake}")
                     MakeTime = self.endMake - self.startMake
@@ -205,32 +218,39 @@ class Player1:
                     self.run_frame_progress = 0.0
 
             if self.state in ('IDLE', 'MAKE', 'RUN', 'THROW'):
-                self.action = 0
                 if event.type == SDL_KEYDOWN and event.key == SDLK_a:
+                    self.action = 0
                     if self.DirX == "right" : self.dirX = 0.0
                     self.dirX -= 1.0
                     self.start_run()
                     self.DirX = "left"
                     print("left")
                 if event.type == SDL_KEYDOWN and event.key == SDLK_d:
+                    self.action = 0
                     if self.DirX == "left" : self.dirX = 0.0
                     self.dirX += 1.0
                     self.start_run()
                     self.DirX = "right"
                     print("right")
                 if event.type == SDL_KEYDOWN and event.key == SDLK_w:
+                    self.action = 0
                     if self.DirY == "down" : self.dirY = 0.0
                     self.dirY += 1.0
                     self.start_run()
                     self.DirY = "up"
                     print("up")
                 if event.type == SDL_KEYDOWN and event.key == SDLK_s:
+                    self.action = 0
                     if self.DirY == "up" : self.dirY = 0.0
                     self.dirY -= 1.0
                     self.start_run()
                     self.DirY = "down"
                     print("down")
-                elif self.state in "RUN" and event.type == SDL_KEYUP:
+                elif (
+                    self.state in "RUN"
+                    and event.type == SDL_KEYUP
+                    and event.key in (SDLK_a, SDLK_d, SDLK_w, SDLK_s)
+                ):
                     self.start_idle()
                     if self.dirX < 0 : self.dirX += 1.0
                     elif self.dirX > 0 : self.dirX -= 1.0

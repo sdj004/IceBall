@@ -116,6 +116,8 @@ class Player2:
             if self.action == 5: 
                 self.frame = (self.frame + 1) % 3
                 if self.frame == 2 :
+                    self.frame = 0
+                    self.action = 0
                     self.start_idle()
             else : 
                 self.frame = (self.frame + 1) % 12
