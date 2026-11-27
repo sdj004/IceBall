@@ -4,10 +4,12 @@ import Player2
 import Power
 import fightBack
 import game_world
+
 from pico2d import (
     SDL_KEYDOWN,
     SDL_QUIT,
     SDLK_ESCAPE,
+    SDLK_KP_MULTIPLY,
     clear_canvas,
     get_events,
     get_time,
@@ -17,7 +19,6 @@ from pico2d import (
 
 POWER_INTERVAL = 30.0
 POWER_DISPLAY_DURATION = 2.0
-
 
 class PlayMode:
     def init(self):
@@ -40,6 +41,10 @@ class PlayMode:
             if event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
                 frame_work.quit()
                 return
+            if event.type == SDL_KEYDOWN and event.key == SDLK_KP_MULTIPLY:
+                print("show Collision Box")
+                if game_world.check_collision_box == False : game_world.check_collision_box = True
+                else : game_world.check_collision_box = False
 
         running = self.player1.ProcessEvent(True, events, self.player2)
         running = self.player2.ProcessEvent(running, events, self.player1)

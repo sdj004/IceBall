@@ -15,6 +15,7 @@ class Snow:
 
     def draw(self):
         if self.exist : self.SnowBall.draw(self.x, self.y, self.xSize, self.ySize)
+        if self.exist and game_world.check_collision_box : draw_rectangle(*self.get_bb())
 
     def update(self, Mx, My, playerX, playerY):
         moveX = abs(Mx - playerX) / 30
@@ -24,7 +25,7 @@ class Snow:
         self.y += moveY
 
     def get_bb(self):
-        return self.x - 50, self.y - 50, self.x + 50, self.y + 50
+        return self.x - 25, self.y - 25, self.x + 25, self.y + 25
 
     def handle_collision(self, group, other):
         if group == "player2:snowball" : 

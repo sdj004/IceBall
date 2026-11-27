@@ -1,4 +1,5 @@
 from pico2d import draw_rectangle
+import game_world
 BACKGROUND = 0
 OBJECT = 1
 UI = 2
@@ -6,6 +7,7 @@ LAYER_COUNT = 3
 
 world = [[] for _ in range(LAYER_COUNT)]
 collision_pairs = {}
+check_collision_box = False
 
 
 def add_object(obj, depth=OBJECT):
@@ -37,7 +39,7 @@ def render():
     for layer in world:
         for obj in layer[:]:
             obj.draw()
-            if hasattr(obj, 'get_bb'):
+            if game_world.check_collision_box and hasattr(obj, 'get_bb'):
                 draw_rectangle(*obj.get_bb())
 
 
