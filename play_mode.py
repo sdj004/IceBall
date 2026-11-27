@@ -71,8 +71,8 @@ class PlayMode:
         game_world.render()
 
         if self.power.shoulddraw:
-             self.power.ShowGetPower(1)
-             self.power.ShowGetPower(2)
+             self.power.draw(1)
+             self.power.draw(2)
         update_canvas()
 
     def finish(self):

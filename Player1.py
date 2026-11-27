@@ -15,6 +15,12 @@ class Snow:
     def draw(self):
         self.SnowBall.draw(self.x, self.y, self.xSize, self.ySize)
 
+    def get_bb(self):
+        return self.x - 50, self.y - 50, self.x + 50, self.y + 50
+
+    def handle_collision(self, group, other):
+        if group == "player1:snowball" : game_world.remove_object(self)
+
 class Player1:
     def __init__(self):
         self.run = load_image("run1.png")
@@ -118,6 +124,8 @@ class Player1:
                     self.frame = 0
                     self.start_idle()
 
+            game_world.handle_collisions()
+
         direction_length = math.hypot(self.dirX, self.dirY)
         direction_x = self.dirX
         direction_y = self.dirY
@@ -207,11 +215,15 @@ class Player1:
         return run_game
 
     def get_bb(self):
-        return self.x - 50, self.y - 50, self.x + 50, self.y + 50
+        if self.state in "RUN" : return self.x - 60, self.y - 100, self.x + 60, self.y + 100
+        elif self.state in "IDLE" : return self.x - 25, self.y - 110, self.x + 25, self.y + 110
+        elif 2 <= self.action <= 4 and self.state in "MAKE" : return self.x - 50, self.y - 115, self.x + 50, self.y + 70
+        elif (self.action <= 1 or self.action >= 5) and self.state in "MAKE" : return self.x - 50, self.y - 110, self.x + 50, self.y + 100
+        elif self.state in "THROW" : return self.x - 40, self.y - 110, self.x + 40, self.y + 110
 
     def handle_collision(self, group, other):
         global game_framework
         
         if group == "player1:snowball":
-            pass
+            print("out")
        

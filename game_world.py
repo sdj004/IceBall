@@ -38,7 +38,6 @@ def render():
         for obj in layer[:]:
             obj.draw()
             if hasattr(obj, 'get_bb'):
-                print("player 1 get_bb")
                 draw_rectangle(*obj.get_bb())
 
 

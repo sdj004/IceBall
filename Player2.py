@@ -1,6 +1,8 @@
 from pico2d import *
 from transitions import Machine
 import frame_work
+import game_world
+
 class Snow:
     def __init__(self, x, y):
         self.x = x + 50
@@ -11,6 +13,12 @@ class Snow:
 
     def draw(self):
         self.SnowBall.draw(self.x, self.y, self.xSize, self.ySize)
+
+    def get_bb(self):
+        return self.x - 50, self.y - 50, self.x + 50, self.y + 50
+
+    def handle_collision(self, group, other):
+        if group == "player2:snowball" : game_world.remove_object(self)
 
 class Player2:
     def __init__(self):
@@ -115,6 +123,8 @@ class Player2:
                     self.frame = 0
                     self.start_idle()
 
+            game_world.handle_collisions()
+
         direction_length = math.hypot(self.dirX, self.dirY)
         direction_x = self.dirX
         direction_y = self.dirY
@@ -143,6 +153,7 @@ class Player2:
                         self.Mx = player.x
                         self.My = player.y
                         self.start_throw()
+                        game_world.add_collision_pair("player1:snowball", player, self.Snow)
                         
 
             if self.state in ('IDLE', 'MAKE'):
@@ -195,4 +206,17 @@ class Player2:
                     self.action = 0
 
         return run_game
+
+    def get_bb(self):
+        if self.state in "RUN" : return self.x - 60, self.y - 100, self.x + 60, self.y + 100
+        elif self.state in "IDLE" : return self.x - 25, self.y - 110, self.x + 25, self.y + 110
+        elif 2 <= self.action <= 4 and self.state in "MAKE" : return self.x - 50, self.y - 115, self.x + 50, self.y + 70
+        elif (self.action <= 1 or self.action >= 5) and self.state in "MAKE" : return self.x - 50, self.y - 110, self.x + 50, self.y + 100
+        elif self.state in "THROW" : return self.x - 40, self.y - 110, self.x + 40, self.y + 110
+    
+    def handle_collision(self, group, other):
+        global game_framework
             
+        if group == "player2:snowball":
+            print("out")
+           
