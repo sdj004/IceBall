@@ -10,16 +10,26 @@ class Snow:
         self.y = y + 20.0
         self.xSize = 100
         self.ySize = 100
+        self.exist = False
         self.SnowBall = load_image("SnowBall.png")
 
     def draw(self):
-        self.SnowBall.draw(self.x, self.y, self.xSize, self.ySize)
+        if self.exist : self.SnowBall.draw(self.x, self.y, self.xSize, self.ySize)
+
+    def update(self, Mx, My, playerX, playerY):
+        moveX = abs(Mx - playerX) / 30
+        moveY = (800 - My - playerY) / 30
+        
+        self.x += moveX
+        self.y += moveY
 
     def get_bb(self):
         return self.x - 50, self.y - 50, self.x + 50, self.y + 50
 
     def handle_collision(self, group, other):
-        if group == "player1:snowball" : game_world.remove_object(self)
+        if group == "player2:snowball" : 
+            print("hit")
+            self.exist = False
 
 class Player1:
     def __init__(self):
@@ -107,11 +117,8 @@ class Player1:
                 self.frame = 0
 
         if self.state in "THROW":
-            moveX = abs(self.Mx - self.x) / 30
-            moveY = (800 - self.My - self.y) / 30
+            self.Snow.update(self.Mx, self.My, self.x, self.y)
 
-            self.Snow.x += moveX
-            self.Snow.y += moveY
             if self.action < 5 : 
                 self.frame = (self.frame + 1) % 12
                 if self.frame == 11: 
@@ -154,6 +161,7 @@ class Player1:
                         self.Mx = event.x
                         self.My = event.y
                         self.start_throw()
+                        self.Snow.exist = True
                         game_world.add_collision_pair("player2:snowball", player2, self.Snow)
                         
 
@@ -225,5 +233,5 @@ class Player1:
         global game_framework
         
         if group == "player1:snowball":
-            print("out")
+            print("player 1: out")
        

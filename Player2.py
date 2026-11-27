@@ -9,16 +9,26 @@ class Snow:
         self.y = y + 20
         self.xSize = 100
         self.ySize = 100
+        self.exist = False
         self.SnowBall = load_image("SnowBall.png")
 
     def draw(self):
-        self.SnowBall.draw(self.x, self.y, self.xSize, self.ySize)
+        if self.exist : self.SnowBall.draw(self.x, self.y, self.xSize, self.ySize)
+
+    def update(self, Mx, My, playerX, playerY):
+            moveX = abs(Mx - playerX) / 30
+            moveY = (My - playerY) / 45
+
+            self.x -= moveX
+            self.y += moveY
 
     def get_bb(self):
         return self.x - 50, self.y - 50, self.x + 50, self.y + 50
 
     def handle_collision(self, group, other):
-        if group == "player2:snowball" : game_world.remove_object(self)
+        if group == "player1:snowball" : 
+            self.exist = False
+            print("hit")
 
 class Player2:
     def __init__(self):
@@ -88,7 +98,7 @@ class Player2:
         if self.state in "THROW":
             self.throw.clip_composite_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, 0, 'h', self.x, self.y, self.ySize - (self.y * 0.2), self.ySize - (self.y * 0.2))
             self.Snow.draw()
-
+            
     def update(self):
         if self.state in "RUN":
             frame_count = self.RUN_FRAMES_PER_STRIDE
@@ -106,11 +116,7 @@ class Player2:
                 self.frame = 0
 
         if self.state in "THROW":
-            moveX = abs(self.Mx - self.x) / 30
-            moveY = (self.My - self.y) / 45
-
-            self.Snow.x -= moveX
-            self.Snow.y += moveY
+            self.Snow.update(self.Mx, self.My, self.x, self.y)
             if self.action < 5 : 
                 self.frame = (self.frame + 1) % 12
                 if self.frame == 11: 
@@ -153,6 +159,7 @@ class Player2:
                         self.Mx = player.x
                         self.My = player.y
                         self.start_throw()
+                        self.Snow.exist = True
                         game_world.add_collision_pair("player1:snowball", player, self.Snow)
                         
 
@@ -218,5 +225,5 @@ class Player2:
         global game_framework
             
         if group == "player2:snowball":
-            print("out")
+            print("player 2: out")
            
