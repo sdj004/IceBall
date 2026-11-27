@@ -1,10 +1,12 @@
 from pico2d import *
 from transitions import Machine
+import frame_work
+import math
 
 class Snow:
     def __init__(self, x, y):
-        self.x = x + 50
-        self.y = y + 20
+        self.x = x + 50.0
+        self.y = y + 20.0
         self.xSize = 100
         self.ySize = 100
         self.SnowBall = load_image("SnowBall.png")
@@ -18,8 +20,8 @@ class Player1:
         self.hit = load_image("hit1.png")
         self.throw = load_image("throwSnowBall1.png")
         self.make = load_image("makeSnowBall1.png")
-        self.x = 200
-        self.y = 200
+        self.x = 200.0
+        self.y = 200.0
         self.dirX = 0
         self.dirY = 0
         self.DirX = 'right'
@@ -29,12 +31,21 @@ class Player1:
         self.snowBall = False
         self.startMake = 0
         self.endMake = 0
-        self.Mx = 0
-        self.My = 0
-        self.xSize = 300
-        self.ySize = 300
+        self.Mx = 0.0
+        self.My = 0.0
+        self.xSize = 300.0
+        self.ySize = 300.0
         self.makeTime = 0.75
         self.Snow = Snow(self.x, self.y)
+        self.PIXEL_PER_METER = (300.0 / 1.7)
+        self.RUN_SPEED_KMPH = 10.0
+        self.RUN_SPEED_MPM = (self.RUN_SPEED_KMPH * 1000.0 / 60.0)
+        self.RUN_SPEED_MPS = (self.RUN_SPEED_MPM / 60.0)
+        self.RUN_SPEED_PPS = (self.RUN_SPEED_MPS * self.PIXEL_PER_METER)
+        self.STRIDE_LENGTH_M = 0.8
+        self.RUN_FRAMES_PER_STRIDE = 12
+        self.RUN_FRAMES_PER_SECOND = self.RUN_SPEED_MPS / self.STRIDE_LENGTH_M * self.RUN_FRAMES_PER_STRIDE
+        self.run_frame_progress = 0.0
 
         self.machine = Machine(
             model=self,
@@ -74,16 +85,13 @@ class Player1:
 
     def update(self):
         if self.state in "RUN":
-            if self.action < 5 : 
-                self.frame = (self.frame + 1) % 12
-                if self.frame == 11: 
-                    #self.action = (self.action + 1) % 5
-                    self.frame = 0
-            else : 
-                self.frame = (self.frame + 1) % 3
-                if self.frame == 2 : 
-                    #self.action = (self.action + 1) % 5
-                    self.frame = 0
+            frame_count = self.RUN_FRAMES_PER_STRIDE
+            frames_per_second = self.RUN_FRAMES_PER_SECOND
+            self.run_frame_progress = (
+                self.run_frame_progress
+                + frames_per_second * frame_work.frame_time
+            ) % frame_count
+            self.frame = int(self.run_frame_progress)
 
         if self.state in "MAKE":
             self.frame = (self.frame + 1) % 12
@@ -109,8 +117,20 @@ class Player1:
                     self.frame = 0
                     self.start_idle()
 
-        if self.x + self.dirX > 200 and self.x + self.dirX < 500 :  self.x += self.dirX * 5
-        if self.y + self.dirY > 200 and self.y + self.dirY < 400 : self.y += self.dirY * 5
+        direction_length = math.hypot(self.dirX, self.dirY)
+        direction_x = self.dirX
+        direction_y = self.dirY
+        if direction_length > 1.0:
+            direction_x /= direction_length
+            direction_y /= direction_length
+
+        frame_time = frame_work.frame_time
+        next_x = self.x + direction_x * self.RUN_SPEED_PPS * frame_time
+        next_y = self.y + direction_y * self.RUN_SPEED_PPS * frame_time
+        if 100.0 < next_x < 500.0:
+            self.x = next_x
+        if 200.0 < next_y < 400.0:
+            self.y = next_y
 
     def ProcessEvent(self, run_game, events):
 
@@ -142,42 +162,44 @@ class Player1:
                     self.start_idle()
                     self.frame = 0
                     self.action = 0
+                    self.run_frame_progress = 0.0
 
             if self.state in ('IDLE', 'MAKE', 'RUN', 'THROW'):
                 if event.type == SDL_KEYDOWN and event.key == SDLK_a:
-                    if self.DirX == "right" : self.dirX = 0
-                    self.dirX -= 1
+                    if self.DirX == "right" : self.dirX = 0.0
+                    self.dirX -= 1.0
                     self.start_run()
                     self.DirX = "left"
                     print("left")
                 if event.type == SDL_KEYDOWN and event.key == SDLK_d:
-                    if self.DirX == "left" : self.dirX = 0
-                    self.dirX += 1
+                    if self.DirX == "left" : self.dirX = 0.0
+                    self.dirX += 1.0
                     self.start_run()
                     self.DirX = "right"
                     print("right")
                 if event.type == SDL_KEYDOWN and event.key == SDLK_w:
-                    if self.DirY == "down" : self.dirY = 0
-                    self.dirY += 1
+                    if self.DirY == "down" : self.dirY = 0.0
+                    self.dirY += 1.0
                     self.start_run()
                     self.DirY = "up"
                     print("up")
                 if event.type == SDL_KEYDOWN and event.key == SDLK_s:
-                    if self.DirY == "up" : self.dirY = 0
-                    self.dirY -= 1
+                    if self.DirY == "up" : self.dirY = 0.0
+                    self.dirY -= 1.0
                     self.start_run()
                     self.DirY = "down"
                     print("down")
                 elif self.state in "RUN" and event.type == SDL_KEYUP:
                     self.start_idle()
-                    if self.dirX < 0 : self.dirX += 1
-                    elif self.dirX > 0 : self.dirX -= 1
+                    if self.dirX < 0 : self.dirX += 1.0
+                    elif self.dirX > 0 : self.dirX -= 1.0
 
-                    if self.dirY < 0 : self.dirY += 1
-                    elif self.dirY > 0 : self.dirY -= 1 
+                    if self.dirY < 0 : self.dirY += 1.0
+                    elif self.dirY > 0 : self.dirY -= 1.0
 
                     self.frame = 0
                     self.action = 0
+                    self.run_frame_progress = 0.0
                     print("None")
 
         return run_game
