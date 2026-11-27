@@ -22,7 +22,7 @@ class Player2:
         self.y = 200
         self.dirX = 0
         self.dirY = 0
-        self.DirX = 'right'
+        self.DirX = 'left'
         self.DirY = 'up'
         self.frame = 0
         self.action = 0

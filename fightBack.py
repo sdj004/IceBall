@@ -6,3 +6,6 @@ class Background:
 
     def draw(self):
         self.image.draw(600, 400, 1200, 800)
+
+    def update(self):
+        pass

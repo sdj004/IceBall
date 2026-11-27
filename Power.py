@@ -21,7 +21,7 @@ class Power:
         self.powerSize = 300
         self.CardSize = 500
         self.GiftBoxSize = 200
-        self.draw = False
+        self.shoulddraw = False
 
     def GetPower(self, player):
         index = random.randint(0, 8)
@@ -50,7 +50,7 @@ class Power:
         elif index == 8:
             pass
 
-    def ShowGetPower(self, who):
+    def draw(self, who):
         if who == 1 : self.Card.draw(300, 400, self.CardSize, self.CardSize)
         else : self.Card.draw(900, 400, self.CardSize, self.CardSize)
 
@@ -82,4 +82,5 @@ class Power:
             if who == 1: self.ThrowTwice.draw(300, 400, self.powerSize, self.powerSize)
             else : self.ThrowTwice.draw(900, 400, self.powerSize, self.powerSize)
        
-       
+    def update(self):
+        pass   

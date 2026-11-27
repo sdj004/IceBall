@@ -2,6 +2,7 @@ from pico2d import *
 from transitions import Machine
 import frame_work
 import math
+import game_world
 
 class Snow:
     def __init__(self, x, y):
@@ -132,7 +133,7 @@ class Player1:
         if 200.0 < next_y < 400.0:
             self.y = next_y
 
-    def ProcessEvent(self, run_game, events):
+    def ProcessEvent(self, run_game, events, player2):
 
         for event in events:
             if event.type == SDL_QUIT:
@@ -145,6 +146,7 @@ class Player1:
                         self.Mx = event.x
                         self.My = event.y
                         self.start_throw()
+                        game_world.add_collision_pair("player2:snowball", player2, self.Snow)
                         
 
             if self.state in ('IDLE', 'MAKE'):
@@ -203,4 +205,13 @@ class Player1:
                     print("None")
 
         return run_game
-            
+
+    def get_bb(self):
+        return self.x - 50, self.y - 50, self.x + 50, self.y + 50
+
+    def handle_collision(self, group, other):
+        global game_framework
+        
+        if group == "player1:snowball":
+            pass
+       
