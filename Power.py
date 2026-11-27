@@ -40,8 +40,7 @@ class Power:
         if index == 0:
             player.makeTime = 0.325
         elif index == 1:
-            player.Snow.xSize = 200
-            player.Snow.ySize = 200
+            player.bigSnowball = True
         elif index == 2:
             player.RUN_SPEED_KMPH = 14.0
             player.RUN_SPEED_MPM = (player.RUN_SPEED_KMPH * 1000.0 / 60.0)
@@ -58,9 +57,9 @@ class Power:
         elif index == 5:
             player.xSize = 150
             player.ySize = 150
-            self.STRIDE_LENGTH_M = 0.4
-            self.RUN_FRAMES_PER_STRIDE = 12
-            self.RUN_FRAMES_PER_SECOND = self.RUN_SPEED_MPS / self.STRIDE_LENGTH_M * self.RUN_FRAMES_PER_STRIDE
+            player.STRIDE_LENGTH_M = 0.4
+            player.RUN_FRAMES_PER_STRIDE = 12
+            player.RUN_FRAMES_PER_SECOND = player.RUN_SPEED_MPS / player.STRIDE_LENGTH_M * player.RUN_FRAMES_PER_STRIDE
         elif index == 6:
             pass
         elif index == 7:

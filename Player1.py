@@ -12,27 +12,33 @@ class Snow:
         self.y = y + 20.0
         self.xSize = 100
         self.ySize = 100
-        self.exist = False
+        self.exist = True
         self.SnowBall = load_image("SnowBall.png")
+        self.throwed = False
+        self.big = False
 
     def draw(self):
-        if self.exist : self.SnowBall.draw(self.x, self.y, self.xSize, self.ySize)
-        if self.exist and game_world.check_collision_box : draw_rectangle(*self.get_bb())
+        if self.big and self.exist and self.throwed : self.SnowBall.draw(self.x, self.y, self.xSize * 2, self.ySize * 2)
+        elif self.throwed and self.exist : self.SnowBall.draw(self.x, self.y, self.xSize, self.ySize)
+        if self.throwed and self.exist and game_world.check_collision_box : draw_rectangle(*self.get_bb())
 
     def update(self, Mx, My, playerX, playerY):
-        moveX = abs(Mx - playerX) / 30
-        moveY = (800 - My - playerY) / 30
+        if self.throwed:
+            moveX = abs(Mx - playerX) / 30
+            moveY = (800 - My - playerY) / 30
         
-        self.x += moveX
-        self.y += moveY
+            self.x += moveX
+            self.y += moveY
+        if self.x > 1200 : self.exist = False
 
     def get_bb(self):
-        return self.x - 25, self.y - 25, self.x + 25, self.y + 25
+        if not self.big : return self.x - 25, self.y - 25, self.x + 25, self.y + 25
+        else : return self.x - 50, self.y - 50, self.x + 50, self.y + 50
 
     def handle_collision(self, group, other):
         if group == "player2:snowball" : 
             print("hit")
-            self.exist = False
+            self.exist = False           
 
 class Player1:
     def __init__(self):
@@ -57,7 +63,8 @@ class Player1:
         self.ySize = 300.0
         self.makeTime = 0.75
         self.power = None
-        self.Snow = Snow(self.x, self.y)
+        self.Snow = []
+        self.bigSnowball = False
         self.PIXEL_PER_METER = (300.0 / 1.7)
         self.RUN_SPEED_KMPH = 10.0
         self.RUN_SPEED_MPM = (self.RUN_SPEED_KMPH * 1000.0 / 60.0)
@@ -91,6 +98,9 @@ class Player1:
         )
 
     def draw(self):
+        for i in range(len(self.Snow)):
+            self.Snow[i].draw()
+
         if self.state in "RUN":
             if self.DirX == "right" : self.run.clip_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, self.x, self.y, self.xSize - (self.y * 0.2), self.ySize - (self.y * 0.2))
             else : self.run.clip_composite_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, 0, 'h', self.x, self.y, self.xSize - (self.y * 0.2), self.ySize - (self.y * 0.2))
@@ -105,7 +115,6 @@ class Player1:
 
         if self.state in "THROW":
             self.throw.clip_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, self.x, self.y, self.ySize - (self.y * 0.2), self.ySize - (self.y * 0.2))
-            self.Snow.draw()
 
         if self.state in "HIT":
             pico2d_core.SDL_SetRenderDrawBlendMode(
@@ -117,6 +126,9 @@ class Player1:
             else : self.hit.clip_composite_draw(self.frame * 720, (5 - self.action) * 720, 720, 720, 0, 'h', self.x, self.y, self.xSize - (self.y * 0.2), self.ySize - (self.y * 0.2))
 
     def update(self):
+        for snow in self.Snow[:]:
+            snow.update(self.Mx, self.My, self.x, self.y)
+
         if self.state in "HIT":
             if self.action == 5: 
                 self.frame = (self.frame + 1) % 3
@@ -152,7 +164,6 @@ class Player1:
             )
 
         if self.state in "THROW":
-            self.Snow.update(self.Mx, self.My, self.x, self.y)
 
             if self.action < 5 : 
                 self.frame = (self.frame + 1) % 12
@@ -167,6 +178,11 @@ class Player1:
                     self.start_idle()
 
             game_world.handle_collisions()
+
+        inactive_snowballs = [snow for snow in self.Snow if not snow.exist]
+        for snow in inactive_snowballs:
+            game_world.remove_collision_pair(snow)
+        self.Snow = [snow for snow in self.Snow if snow.exist]
 
         direction_length = math.hypot(self.dirX, self.dirY)
         direction_x = self.dirX
@@ -196,10 +212,12 @@ class Player1:
                         self.Mx = event.x
                         self.My = event.y
                         self.start_throw()
-                        self.Snow.exist = True
+                        self.Snow[len(self.Snow) - 1].throwed = True
+                        self.Snow[len(self.Snow) - 1].exist = True
                         print(f"{mouseclick} : mouse click")
                         mouseclick += 1
-                        game_world.add_collision_pair("player2:snowball", player2, self.Snow)
+                        game_world.add_collision_pair("player2:snowball", player2, self.Snow[len(self.Snow)-1])
+                        self.snowBall = False
                         
 
             if self.state in ('IDLE', 'MAKE'):
@@ -221,10 +239,11 @@ class Player1:
                     self.endMake = get_time()
                     print(f"make time : {self.endMake - self.startMake}")
                     MakeTime = self.endMake - self.startMake
-                    if MakeTime >= self.makeTime - 0.1: 
+                    if not self.snowBall and MakeTime >= self.makeTime - 0.1: 
+                        temp_snow = Snow(self.x, self.y)
+                        if self.bigSnowball : temp_snow.big = True
                         self.snowBall = True
-                        self.Snow.x = self.x + 50
-                        self.Snow.y = self.y + 20
+                        self.Snow.append(temp_snow)
                     self.start_idle()
                     self.frame = 0
                     self.action = 0
@@ -304,7 +323,7 @@ class Player1:
         if self.ySize > 300.0:
             scale_y = 1.0 + (self.ySize - 300.0) / 300.0
         elif self.ySize < 300.0:
-            scale_y = 1.0 - (300.0 - self.ySize) / 300.0
+            scale_y = 1.0 - (300.0 - self.ySize - 10) / 300.0
         else:
             scale_y = 1.0
 

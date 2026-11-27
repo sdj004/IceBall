@@ -46,6 +46,7 @@ def render():
 def clear():
     for layer in world:
         layer.clear()
+    collision_pairs.clear()
 
 
 def collide(a, b):
@@ -69,11 +70,33 @@ def add_collision_pair(group, a, b):
         if b not in collision_pairs[group][1]:
             collision_pairs[group][1].append(b)
 
+
+def remove_collision_pair(obj):
+    for group, pairs in list(collision_pairs.items()):
+        pairs[0][:] = [candidate for candidate in pairs[0] if candidate is not obj]
+        pairs[1][:] = [candidate for candidate in pairs[1] if candidate is not obj]
+        if not pairs[0] or not pairs[1]:
+            del collision_pairs[group]
+
+
+def _remove_inactive_collision_pairs():
+    for pairs in list(collision_pairs.values()):
+        for obj in pairs[0][:] + pairs[1][:]:
+            if getattr(obj, "exist", True) is False:
+                remove_collision_pair(obj)
+
+
 def handle_collisions():
-    for group, pairs in collision_pairs.items():
+    _remove_inactive_collision_pairs()
+    for group, pairs in list(collision_pairs.items()):
         for a in pairs[0][:]:
             for b in pairs[1][:]:
+                if getattr(a, "exist", True) is False:
+                    continue
+                if getattr(b, "exist", True) is False:
+                    continue
                 if collide(a, b):
                     a.handle_collision(group, b)
                     b.handle_collision(group, a)
+    _remove_inactive_collision_pairs()
 
