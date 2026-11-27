@@ -25,9 +25,10 @@ class PlayMode:
         self.player1 = Player1.Player1()
         self.player2 = Player2.Player2()
         self.background = fightBack.Background()
-        self.power = Power.Power()
-        self.power.startTime = get_time()
-        self.power_display_until = 0.0
+        self.player1.power = Power.Power()
+        self.player2.power = Power.Power()
+        self.player1.power.startTime = get_time()
+        self.player1.power_display_until = 0.0
         game_world.add_object(self.background, 0)
         game_world.add_object(self.player1, 1)
         game_world.add_object(self.player2, 1)
@@ -56,14 +57,14 @@ class PlayMode:
         # self.player2.update()
         game_world.update()
         now = get_time()
-        if now - self.power.startTime >= POWER_INTERVAL:
-            self.power.GetPower(self.player1, 1)
-            self.power.GetPower(self.player2, 2)
-            self.power.startTime = now
-            self.power.shoulddraw = True
-            self.power_display_until = now + POWER_DISPLAY_DURATION
-        elif self.power.shoulddraw and now >= self.power_display_until:
-            self.power.shoulddraw = False
+        if now - self.player1.power.startTime >= POWER_INTERVAL:
+            self.player1.power.GetPower(self.player1, 1)
+            self.player2.power.GetPower(self.player2, 2)
+            self.player1.power.startTime = now
+            self.player1.power.shoulddraw = True
+            self.player1.power_display_until = now + POWER_DISPLAY_DURATION
+        elif self.player1.power.shoulddraw and now >= self.player1.power_display_until:
+            self.player1.power.shoulddraw = False
 
     def render(self):
         clear_canvas()
@@ -75,9 +76,9 @@ class PlayMode:
         #     self.power.ShowGetPower(2)
         game_world.render()
 
-        if self.power.shoulddraw:
-             self.power.draw(1)
-             self.power.draw(2)
+        if self.player1.power.shoulddraw:
+             self.player1.power.draw(self.player1, 1)
+             self.player2.power.draw(self.player2, 2)
         update_canvas()
 
     def finish(self):

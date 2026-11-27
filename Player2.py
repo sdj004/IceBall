@@ -54,6 +54,7 @@ class Player2:
         self.xSize = 300
         self.ySize = 300
         self.makeTime = 0.75
+        self.power = None
         self.Snow = Snow(self.x, self.y)
         self.PIXEL_PER_METER = (300.0 / 1.7)
         self.RUN_SPEED_KMPH = 10.0

@@ -43,15 +43,24 @@ class Power:
             player.Snow.xSize = 200
             player.Snow.ySize = 200
         elif index == 2:
-            pass
+            player.RUN_SPEED_KMPH = 14.0
+            player.RUN_SPEED_MPM = (player.RUN_SPEED_KMPH * 1000.0 / 60.0)
+            player.RUN_SPEED_MPS = (player.RUN_SPEED_MPM / 60.0)
+            player.RUN_SPEED_PPS = (player.RUN_SPEED_MPS * player.PIXEL_PER_METER)
         elif index == 3:
-            pass
+            player.RUN_SPEED_KMPH = 7.0
+            player.RUN_SPEED_MPM = (player.RUN_SPEED_KMPH * 1000.0 / 60.0)
+            player.RUN_SPEED_MPS = (player.RUN_SPEED_MPM / 60.0)
+            player.RUN_SPEED_PPS = (player.RUN_SPEED_MPS * player.PIXEL_PER_METER)
         elif index == 4:
             player.xSize = 500
             player.ySize = 500
         elif index == 5:
             player.xSize = 150
             player.ySize = 150
+            self.STRIDE_LENGTH_M = 0.4
+            self.RUN_FRAMES_PER_STRIDE = 12
+            self.RUN_FRAMES_PER_SECOND = self.RUN_SPEED_MPS / self.STRIDE_LENGTH_M * self.RUN_FRAMES_PER_STRIDE
         elif index == 6:
             pass
         elif index == 7:
@@ -59,37 +68,37 @@ class Power:
         elif index == 8:
             pass
 
-    def draw(self, who):
+    def draw(self, player, who):
         if who == 1 : self.Card.draw(300, 400, self.CardSize, self.CardSize)
         else : self.Card.draw(900, 400, self.CardSize, self.CardSize)
 
         if self.power == 0:
             if who == 1: self.MakeFast.draw(300, 400, self.powerSize, self.powerSize)
-            else : self.MakeFast.draw(900, 400, self.powerSize, self.powerSize)
+            elif who == 2 : self.MakeFast.draw(900, 400, self.powerSize, self.powerSize)
         elif self.power == 1:
             if who == 1: self.SnowBallBigger.draw(300, 400, self.powerSize, self.powerSize)
-            else : self.SnowBallBigger.draw(900, 400, self.powerSize, self.powerSize)
+            elif who == 2 : self.SnowBallBigger.draw(900, 400, self.powerSize, self.powerSize)
         elif self.power == 2:
             if who == 1: self.CharecterSpeedUp.draw(300, 400, self.powerSize, self.powerSize)
-            else : self.CharecterSpeedUp.draw(900, 400, self.powerSize, self.powerSize)
+            elif who == 2 : self.CharecterSpeedUp.draw(900, 400, self.powerSize, self.powerSize)
         elif self.power == 3:
             if who == 1: self.CharecterSpeedDown.draw(300, 400, self.powerSize, self.powerSize)
-            else : self.CharecterSpeedDown.draw(900, 400, self.powerSize, self.powerSize)
+            elif who == 2 : self.CharecterSpeedDown.draw(900, 400, self.powerSize, self.powerSize)
         elif self.power == 4:
             if who == 1: self.CharecterBigger.draw(300, 400, self.powerSize, self.powerSize)
-            else : self.CharecterBigger.draw(900, 400, self.powerSize, self.powerSize)
+            elif who == 2 : self.CharecterBigger.draw(900, 400, self.powerSize, self.powerSize)
         elif self.power == 5:
             if who == 1: self.CharecterSmaller.draw(300, 400, self.powerSize, self.powerSize)
-            else : self.CharecterSmaller.draw(900, 400, self.powerSize, self.powerSize)
+            elif who == 2 : self.CharecterSmaller.draw(900, 400, self.powerSize, self.powerSize)
         elif self.power == 6:
             if who == 1: self.SnowBallSpeedUp.draw(300, 400, self.powerSize, self.powerSize)
-            else : self.SnowBallSpeedUp.draw(900, 400, self.powerSize, self.powerSize)
+            elif who == 2 : self.SnowBallSpeedUp.draw(900, 400, self.powerSize, self.powerSize)
         elif self.power == 7:
             if who == 1: self.SnowBallSpeedDown.draw(300, 400, self.powerSize, self.powerSize)
-            else : self.SnowBallSpeedDown.draw(900, 400, self.powerSize, self.powerSize)
+            elif who == 2 : self.SnowBallSpeedDown.draw(900, 400, self.powerSize, self.powerSize)
         elif self.power == 8:
             if who == 1: self.ThrowTwice.draw(300, 400, self.powerSize, self.powerSize)
-            else : self.ThrowTwice.draw(900, 400, self.powerSize, self.powerSize)
+            elif who == 2 : self.ThrowTwice.draw(900, 400, self.powerSize, self.powerSize)
        
     def update(self):
         pass   
